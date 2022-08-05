@@ -1,3 +1,5 @@
+include Irvine32.inc
+
 .386
 .model flat,stdcall
 .stack 4096
@@ -7,52 +9,64 @@ ExitProcess PROTO, dwExitCode:DWORD
 .data
 myList2 DWORD 3,8,3,10,110,5
 myList DWORD 1,2,3,4,5,6
+max DWORD -2147483647
+min DWORD 2147483647
+max_string BYTE "Max: ",0
+min_string BYTE "Min: ",0
 
 .code
 main PROC
-	mov ebp, -4; Array counter.
-	mov edx, -2147483647 ; Move min into edx, use this as the max value.
-	mov ebx, 2147483647 ; Move max into ebx, use this as the min value.
+	mov ebp, 0; Array pointer.
 	mov ecx, 0 ; Set ecx as 0 for counting.
-	jmp compare
 
-	range: 
-		mov eax, [myList + ebp] ; Move contents of myList into eax, element pointed at by ebp.
+	compare_min_max: 
 
-		cmp ebx, eax ; See if the min value is more than the eax value (current element of list)
-		jg set_min ; Set the min to be eax if it is more.
+		compare_for_max: 
+			mov eax, max
+			cmp eax, [myList + ebp] ; See if the max value is less than the current ebp.
+			jl set_max ; Set the max to be eax if it is more.
 
-		cmp edx, eax ; See if the max value is less than the eax value.
-		jl set_max
+		compare_for_min:
+			mov eax, min
+			cmp eax, [myList + ebp] 			
+			jg set_min
+
+			jmp increment
 	
-	set_min: 
-		mov ebx, eax ;; Set ebx to be the value in eax.
-
-		cmp edx, eax
-		jl set_max
-
-		jmp compare
-
 	set_max: 
-		mov edx, eax ;; Set edx to be the value in eax.
+		mov eax, [myList + ebp]
+		mov max, eax	
 		
-		cmp ebx, eax
-		jg set_min
+		;; Go and see if this value is also less than the min.
+		jmp compare_for_min
 
-		jmp compare
-	
-	compare:
+	set_min: 
+		mov eax, [myList + ebp]
+		mov min, eax  
+
+		jmp increment
+
+	;; Increment all the values.		
+	increment:
 		add ecx, 1
 		add ebp, 4
-		cmp ecx, 7
-		jl range
+		cmp ecx, 6
+		jl compare_min_max
 		je end_items
 	
 	end_items: 
-		mov eax, edx ; move the min value into eax
-		sub eax, ebx ; subtract the max from the min
+		call Crlf
+		mov edx,OFFSET max_string
+		call WriteString
+		mov eax, max
+		call WriteInt
+		call Crlf
+		mov eax, min
+		mov edx,OFFSET min_string
+		call WriteString
+		call WriteInt
 
-	INVOKE ExitProcess, eax
+	INVOKE ExitProcess, 0
 main ENDP
 
 END main

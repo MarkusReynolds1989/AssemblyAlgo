@@ -1,0 +1,3 @@
+﻿  Assembling Main.asm...
+Main.asm(4): warning A4011: multiple .MODEL directives found : .MODEL ignored
+  Masm.vcxproj -> C:\Users\reynoldsm1\Code\Asm\Masm\Debug\Masm.exe
