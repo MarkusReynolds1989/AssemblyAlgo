@@ -12,6 +12,14 @@ myList DWORD 1,2,3,4,5,6 ;; [i32; 6]
 MIN DWORD -2147483647 ;; Const i32
 MAX DWORD 2147483647 ;; Const i32
 
+; Add a local variable to a procedure.
+;sub esp, 8
+;number_local equ DWORD PTR [ebp-4] ; test local variable
+;mov number_local, 10
+;mov eax, number_local
+;call WriteInt
+;mov esp, ebp ; remove local variable
+
 .code
 main PROC
 	; Args for GetMax.
