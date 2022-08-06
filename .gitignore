@@ -1,4 +1,7 @@
-*/Debug
+**/Debug
 */x64
 *.user*
 *.filters*
+*.editorconfig*
+*.vs*
+Masm.vcxproj.user
