@@ -14,8 +14,6 @@ MAX DWORD 2147483647 ;; Const i32
 
 .code
 main PROC
-	; mov esi, OFFSET myList ; Point to myList.
-	; mov ecx,LENGTHOF myList ; Counter is set to length of myList.
 	; Args for GetMax.
 	push LENGTHOF myList ; ebp + 12
 	push OFFSET myList ; ebp + 8
@@ -24,9 +22,12 @@ main PROC
 	call WriteInt
 
 	call Crlf
-	push OFFSET myList2
+
+	; Args for GetMin.
 	push LENGTHOF myList2
+	push OFFSET myList2
 	call GetMin
+	; End GetMin.
 	call WriteInt
 
 	INVOKE ExitProcess, 0
@@ -60,7 +61,7 @@ GetMax Proc
 		loop compare_for_max ; When we use loop it checks if we are still under the length of the array.
 
 	pop ebp
-	ret 8 
+	ret 8; Clean up stack.
 GetMax endp
 
 ; Determines the min integer in an array.
@@ -76,9 +77,7 @@ GetMin Proc
 	mov esi, array
 	mov ecx, length_array
 
-	mov eax,MAX
-	mov eax, [esi]
-	call WriteInt
+	mov eax, MAX
 
 	compare_for_min: 
 		cmp eax, [esi]
@@ -93,7 +92,7 @@ GetMin Proc
 		loop compare_for_min
 
 	pop ebp
-	ret 8
+	ret 8 
 GetMin endp
 
 ; Write a function to reverse a string.
