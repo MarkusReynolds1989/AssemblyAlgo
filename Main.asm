@@ -43,7 +43,7 @@ GetMax Proc
 		jmp increment;; Otherwise increment to the next number.
 
 	set_max: 
-		mov eax, [esi] ; Push the array element to the stack.
+		mov eax, [esi] ; Set eax to be the current array element.
 
 	increment:
 		add esi, TYPE DWORD ; Go to the next element of the array.
