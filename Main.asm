@@ -14,14 +14,18 @@ MAX DWORD 2147483647 ;; Const i32
 
 .code
 main PROC
-	mov esi, OFFSET myList ; Point to myList.
-	mov ecx,LENGTHOF myList ; Counter is set to length of myList.
+	; mov esi, OFFSET myList ; Point to myList.
+	; mov ecx,LENGTHOF myList ; Counter is set to length of myList.
+	; Args for GetMax.
+	push LENGTHOF myList ; ebp + 12
+	push OFFSET myList ; ebp + 8
 	call GetMax
+	; End GetMax.
 	call WriteInt
 
 	call Crlf
-	mov esi, OFFSET myList2
-	mov ecx, LENGTHOF myList2
+	push OFFSET myList2
+	push LENGTHOF myList2
 	call GetMin
 	call WriteInt
 
@@ -29,11 +33,17 @@ main PROC
 main ENDP
 
 ; Determines the max integer in an array.
+; *i32 -> i32 -> i32.
 GetMax Proc
+	push ebp ; Save return address
+	mov ebp, esp ; Set base of stack frame.
 
-	; We are doing this because both of these values will be updated in this procedure.
-	push esi ; Save esi, the source index register. This is used for copying the array.
-	push ecx ; Save ecx, this is the counter register. We are using this to track the length.
+	; Local args.
+	array equ [ebp + 8]
+	length_array equ [ebp + 12]
+
+	mov esi, array
+	mov ecx, length_array
 
 	mov eax, MIN ; Set eax to the minimum value.
 
@@ -48,17 +58,27 @@ GetMax Proc
 	increment:
 		add esi, TYPE DWORD ; Go to the next element of the array.
 		loop compare_for_max ; When we use loop it checks if we are still under the length of the array.
-		
-	pop ecx ; Reload the pervious ecx back into the register.
-	pop esi ; Reload the previous esi back into the register.
-	ret
+
+	pop ebp
+	ret 8 
 GetMax endp
 
+; Determines the min integer in an array.
+; *i32 -> i32 -> i32.
 GetMin Proc
-	push esi
-	push ecx
+	push ebp
+	mov ebp, esp
+
+	;local args.
+	array equ [ebp + 8]
+	length_array equ [ebp + 12]
+
+	mov esi, array
+	mov ecx, length_array
 
 	mov eax,MAX
+	mov eax, [esi]
+	call WriteInt
 
 	compare_for_min: 
 		cmp eax, [esi]
@@ -72,9 +92,12 @@ GetMin Proc
 		add esi, TYPE DWORD
 		loop compare_for_min
 
-	pop ecx
-	pop esi
-	ret
+	pop ebp
+	ret 8
 GetMin endp
+
+; Write a function to reverse a string.
+ReverseString Proc
+ReverseString endp
 
 END main
